@@ -1,0 +1,60 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv1
+spec:
+  # 볼륨 특성
+  # 1) 용량
+  capacity:
+    storage: 4Gi
+  # 2) 볼륨 모드
+  # volumeMode: Filesystem
+  # 3) 접근 모드
+  accessModes:
+    - ReadWriteMany
+  # 4) 스토리지 클래스
+  storageClassName: manual
+  # 5) PV 요청 정책
+  persistentVolumeReclaimPolicy: Delete
+  # 볼륨 정의
+  nfs:
+    server: 192.168.10.15
+    path: /nas/k8s
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-web
+spec:
+  # 볼륨 특성
+  # 1) 용량
+  resources:
+    requests:
+      storage: 2Gi
+  # 2) 스토리지 클래스
+  storageClassName: manual
+  # 3) 접근모드
+  accessModes:
+    - ReadWriteMany
+
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: web-pvs
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.14
+      # 볼륨 마운트
+      volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      ports:
+        - containerPort: 80
+  # 볼륨 선언(정의)
+  volumes:
+    - name: html
+      persistentVolumeClaim:
+        claimName: pvc-web

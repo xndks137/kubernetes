@@ -1,0 +1,15 @@
+#kubectl run web --image=nginx --port=80 --dry-run=client -o yaml > nginx-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: web
+  name: web
+  namespace: testbed-ns
+spec:
+  containers:
+  - image: nginx
+    name: web
+    ports:
+    - containerPort: 80
+

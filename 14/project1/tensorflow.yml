@@ -1,0 +1,31 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: tensorflow-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tensorflow
+  template:
+    metadata:
+      name: tensorflow-pod
+      labels:
+        app: tensorflow
+    spec:
+      containers:
+        - image: tensorflow/tensorflow:nightly-jupyter
+          name: tensorflow-container
+          ports:
+            - containerPort: 8888
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: disktype
+                  operator: In
+                  values: ["ssd"]
+                - key: gpu
+                  operator: In
+                  values: ["true"]

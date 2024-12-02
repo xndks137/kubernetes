@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: blue-green-svc
+spec:
+  #type: 
+  #clusterIP:
+  selector:
+    app: web
+    version: blue
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
